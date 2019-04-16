@@ -3,6 +3,20 @@ import { View, Text, Image, StyleSheet } from 'react-native'
 import theme from '../../theme/defalut'
 
 class MovieItem extends React.Component {
+
+    renderBtn = (type) => {
+        switch (type) {
+            case 1 :
+                return <Text style={{...styles.btn,backgroundColor:'#faaf00'}}>想看</Text>
+            case 3 :
+                return <Text style={styles.btn}>购票</Text>
+            case 4 :
+                return <Text style={{...styles.btn,backgroundColor:'#3c9fe6'}}>预售</Text>
+            default :
+                return <Text style={styles.btn}>购票</Text>
+        }
+    }
+
     render () {
         const {movie} = this.props
         let img = movie.img
@@ -34,7 +48,7 @@ class MovieItem extends React.Component {
                         </View>
                     </View>
                     <View>
-                        <Text>购票</Text>
+                        {this.renderBtn(movie.showst)}
                     </View>
                 </View>
             </View>
@@ -76,7 +90,19 @@ const styles = StyleSheet.create({
     golden: {
         color: theme.golden,
         fontWeight: 'bold',
-        fontSize:14
+        fontSize: 14
+    },
+    btn: {
+        alignItems: 'center',
+        width: 47,
+        height: 27,
+        // lineHeight:27,
+        textAlignVertical: 'center',
+        borderRadius: 4,
+        textAlign: 'center',
+        backgroundColor: theme.theme,
+        fontSize: 12,
+        color: '#fff'
     }
 })
 

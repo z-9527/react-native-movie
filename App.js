@@ -10,6 +10,8 @@ import React, { Component } from 'react'
 import { View } from 'react-native'
 import AppContainer from './src/navgation/index'
 
+GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest;   //让谷歌浏览器可以查看网络请求
+
 class App extends Component {
     render () {
         return (
