@@ -1,28 +1,20 @@
 import React from 'react'
-import { View, Text, StyleSheet, Dimensions, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Dimensions } from 'react-native'
 import theme from '../../../theme/defalut'
-import {get} from '../../../utils/ajax'
 import NetError from '../../../components/NetError'
+import HotList from './HotList'
 
 const {height, width} = Dimensions.get('window')
 
 class Movie extends React.Component {
     state = {
-        selectKey: 0
-    }
-    componentDidMount(){
-        this.test()
-    }
-    test = async ()=>{
-        const res = await get('http://fdsafsaf=')
-        console.log(123,res)
+        selectKey: 0,
     }
 
     switchHot = (selectKey) => {
         this.setState({
             selectKey
         })
-
     }
 
     render () {
@@ -45,11 +37,10 @@ class Movie extends React.Component {
                     </View>
                 </View>
                 <View style={{flex: 1}}>
-                    <FlatList
-                        refreshing={true}
-                        data={[{key: 'a'}, {key: 'b'}]}
-                        renderItem={({item}) => <Text>{item.key}</Text>}
-                    />
+                    {
+                        selectKey === 0 ? <HotList/> : <View>
+                        </View>
+                    }
                 </View>
             </NetError>
         )
