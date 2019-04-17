@@ -1,17 +1,26 @@
 import React from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native'
 import theme from '../../theme/defalut'
+import PropTypes from 'prop-types'
 
 class MovieItem extends React.Component {
+    static propTypes = {
+        onPressHandle: PropTypes.func,
+        movie: PropTypes.object
+    }
+    static defaultProps = {
+        onPressHandle: () => {},
+        movie: {}
+    }
 
     renderBtn = (type) => {
         switch (type) {
             case 1 :
-                return <Text style={{...styles.btn,backgroundColor:'#faaf00'}}>想看</Text>
+                return <Text style={{...styles.btn, backgroundColor: '#faaf00'}}>想看</Text>
             case 3 :
                 return <Text style={styles.btn}>购票</Text>
             case 4 :
-                return <Text style={{...styles.btn,backgroundColor:'#3c9fe6'}}>预售</Text>
+                return <Text style={{...styles.btn, backgroundColor: '#3c9fe6'}}>预售</Text>
             default :
                 return <Text style={styles.btn}>购票</Text>
         }
@@ -23,7 +32,7 @@ class MovieItem extends React.Component {
         img = img.replace('http', 'https')
         img = img.replace('w.h', '128.180')
         return (
-            <View style={styles.container}>
+            <TouchableOpacity style={styles.container} activeOpacity={0.8} onPress={this.props.onPressHandle}>
                 <View>
                     <Image style={styles.poster} source={{uri: img}}/>
                 </View>
@@ -51,7 +60,7 @@ class MovieItem extends React.Component {
                         {this.renderBtn(movie.showst)}
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         )
     }
 }
