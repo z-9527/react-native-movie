@@ -7,6 +7,7 @@ import { throttle } from '../../../utils/util'
 
 const {height, width} = Dimensions.get('window')
 
+
 class Movie extends React.Component {
     state = {
         selectKey: 0,
