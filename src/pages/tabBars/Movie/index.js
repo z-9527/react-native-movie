@@ -3,15 +3,17 @@ import { View, Text, StyleSheet, Dimensions, Animated } from 'react-native'
 import theme from '../../../theme/defalut'
 import NetError from '../../../components/NetError'
 import HotList from './HotList'
+import NextList from './NextList'
 import { throttle } from '../../../utils/util'
 
 const {height, width} = Dimensions.get('window')
 
+//Animated在react元素层级过多时出现卡顿
 
 class Movie extends React.Component {
     state = {
-        selectKey: 0,
-        translateX: new Animated.Value(0),   //动画初始值一定是要Animated.Value
+        selectKey: 1,
+        translateX: -width,
     }
 
     switchHot = (selectKey) => {
@@ -84,20 +86,21 @@ class Movie extends React.Component {
                         <Text style={styles.searchIcon}>&#xe692;</Text>
                     </View>
                 </View>
-                <Animated.View style={{...styles.mainContent, transform: [{translateX}]}}
+                <View style={{...styles.mainContent, transform: [{translateX}]}}
                                onStartShouldSetResponder={() => true}
                                onMoveShouldSetResponder={() => true}
                                onResponderGrant={this.onTouchStart}
                                onResponderMove={this.onTouchMove}
                                onResponderRelease={this.onTouchEnd}
+                               onResponderReject={this.onTouchEnd}
                 >
                     <View style={styles.tab}>
                         <HotList/>
                     </View>
                     <View style={styles.tab}>
-                        <Text>fdasfa</Text>
+                        <NextList/>
                     </View>
-                </Animated.View>
+                </View>
             </NetError>
         )
     }

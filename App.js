@@ -9,6 +9,12 @@
 import React, { Component } from 'react'
 import { View } from 'react-native'
 import AppContainer from './src/navgation/index'
+import { createStore, applyMiddleware } from 'redux'
+import thunkMiddleware from 'redux-thunk'
+import appStore from './src/store/reducers'
+import { Provider } from 'react-redux'
+
+const store = createStore(appStore, applyMiddleware(thunkMiddleware))
 
 // GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest;   //让谷歌浏览器可以查看网络请求,但是浏览器又会有跨域的问题
 
@@ -16,7 +22,9 @@ class App extends Component {
     render () {
         return (
             <View style={{flex: 1}}>
-                <AppContainer/>
+                <Provider store={store}>
+                    <AppContainer/>
+                </Provider>
             </View>
         )
     }

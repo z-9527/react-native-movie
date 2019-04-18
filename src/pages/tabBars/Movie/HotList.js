@@ -30,7 +30,8 @@ class HotList extends React.Component {
             movieIds: res.movieIds || []
         })
         this.setState({
-            refreshing: false
+            refreshing: false,
+            completed: false
         })
     }
     loadMoreList = async () => {
