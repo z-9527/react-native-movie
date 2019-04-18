@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux'
-import test from './test'
+import city from './city'
 
 const appStore = combineReducers({
-    test
+    city
 })
 
 export default appStore
