@@ -1,6 +1,6 @@
 import { SET_CITY } from '../actions'
 
-const city = (state = null, action) => {
+const city = (state = {}, action) => {
     switch (action.type) {
         case SET_CITY:
             return action.city

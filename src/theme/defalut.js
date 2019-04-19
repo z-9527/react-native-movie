@@ -5,7 +5,8 @@ const style = {
     basePadding:15,    //基本的padding大小
     baseFontColor: '#666', //基本的文字颜色
     baseFontSize:14,      //基本的文字大小
-    golden:'#faaf00'
+    golden:'#faaf00',
+    fillColor:'#f5f5f5'
 }
 
 export default style

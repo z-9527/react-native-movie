@@ -1,9 +1,9 @@
 import React from 'react'
-import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native'
+import { View, FlatList } from 'react-native'
 import { get } from '../../../utils/ajax'
 import MovieItem from '../../../components/MovieItem'
-import theme from '../../../theme/defalut'
 import { withNavigation } from 'react-navigation'
+import LoadMore from '../../../components/LoadMore'
 
 const ITEM_HEIGHT = 115
 
@@ -53,22 +53,9 @@ class HotList extends React.Component {
             completed: list.length >= movieIds.length
         })
     }
-    _renderFooter = () => {
-        return (
-            <View style={styles.loadingMoreBox}>
-                {
-                    this.state.completed ? <Text style={styles.loadText}>数据加载完毕</Text> : ( this.state.loadingMore &&
-                        <View style={{flexDirection: 'row'}}>
-                            <ActivityIndicator size={'small'} color={theme.baseFontColor}/><Text
-                            style={styles.loadText}> 正在加载...</Text>
-                        </View> )
-                }
-            </View>
-        )
-    }
 
     render () {
-        const {movieList, refreshing} = this.state
+        const {movieList, refreshing, loadingMore, completed} = this.state
         return (
             <View style={{flex: 1}}>
                 <FlatList
@@ -77,7 +64,7 @@ class HotList extends React.Component {
                     data={movieList}
                     onEndReached={this.loadMoreList}
                     onEndReachedThreshold={0.1}
-                    ListFooterComponent={this._renderFooter}
+                    ListFooterComponent={<LoadMore loadingMore={loadingMore} completed={completed}/>}
                     getItemLayout={(data, index) => ( {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index} )}
                     keyExtractor={(item) => `${item.id}`}
                     renderItem={({item}) => <MovieItem movie={item}
@@ -87,18 +74,5 @@ class HotList extends React.Component {
         )
     }
 }
-
-const styles = StyleSheet.create({
-    loadingMoreBox: {
-        flex: 1,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    loadText: {
-        color: theme.baseFontColor,
-        fontSize: theme.baseFontSize
-    }
-})
 
 export default withNavigation(HotList)
