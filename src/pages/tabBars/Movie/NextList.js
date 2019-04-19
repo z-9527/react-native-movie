@@ -2,14 +2,11 @@ import React from 'react'
 import {
     View,
     Text,
-    SectionList,
     FlatList,
     StyleSheet,
     Image,
     Dimensions,
     TouchableOpacity,
-    ScrollView,
-    ActivityIndicator
 } from 'react-native'
 import { get } from '../../../utils/ajax'
 import { connect } from 'react-redux'
@@ -19,6 +16,7 @@ import LoadMore from '../../../components/LoadMore'
 import theme from '../../../theme/defalut'
 
 const {height, width} = Dimensions.get('window')
+const ITEM_HEIGHT = 85
 
 class NextList extends React.Component {
     state = {
@@ -68,6 +66,24 @@ class NextList extends React.Component {
             </View>
         </TouchableOpacity>
     }
+
+    _renderHeader = () => {
+        return (
+            <View style={styles.mostExpectedListBox}>
+                <Text style={styles.title}>近期最受期待</Text>
+                <FlatList
+                    style={styles.mostExpectedList}
+                    horizontal={true}
+                    getItemLayout={(data, index) => ( {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index} )}
+                    data={this.state.mostExpectedList}
+                    keyExtractor={(item) => `${item.id}`}
+                    renderItem={this._renderExpectedItem}
+                    onEndReached={this.getMostExpectedList}
+                    onEndReachedThreshold={0.1}
+                />
+            </View>
+        )
+    }
     getComingList = async () => {
         const res = await get('https://m.maoyan.com/ajax/comingList', {
             ci: this.props.city.id || 57,
@@ -75,7 +91,7 @@ class NextList extends React.Component {
             token: ''
         })
         this.setState({
-            comingList: this._handleComingList([], res.coming || []),
+            comingList: res.coming || [],
             movieIds: res.movieIds || []
         })
     }
@@ -96,60 +112,41 @@ class NextList extends React.Component {
             limit: 10,
             movieIds: ids
         })
-        const list = this._handleComingList(comingList, res.coming || [])
-        console.log(123, list)
+        const list = comingList.concat(res.coming || [])
         this.setState({
             loadingMore: false,
             comingList: list,
             completed: list.length >= movieIds.length
         })
     }
-    _handleComingList = (arr1, arr2) => {
-        let list = arr1.slice()
-        for (let item of arr2) {
-            const index = list.findIndex(a => a.comingTitle === item.comingTitle)
-            if (index === -1) {
-                list.push({
-                    comingTitle: item.comingTitle,
-                    data: [item]
-                })
-            } else {
-                list[index].data.push(item)
-            }
-        }
-        return list
+    _renderItem = ({item, index}) => {
+        const {comingList} = this.state
+        return (
+            <View>
+                {
+                    (index === 0 || comingList[index - 1].comingTitle !== comingList[index].comingTitle) ? <View>
+                        <Text style={styles.title}>{item.comingTitle}</Text>
+                        <MovieItem movie={item}/>
+                    </View> : <View><MovieItem movie={item}/></View>
+                }
+            </View>
+        )
     }
 
     render () {
-        const {mostExpectedList, comingList, loadingMore, completed} = this.state
-        const ITEM_HEIGHT = 85
+        const {comingList, loadingMore, completed} = this.state
+        //这里可以用SectionList，但是处理数据的相较于直接使用FlatList更复杂
         return (
-            <ScrollView style={{flex: 1}}>
-                <View style={styles.mostExpectedListBox}>
-                    <Text style={styles.title}>近期最受期待</Text>
-                    <FlatList
-                        style={styles.mostExpectedList}
-                        horizontal={true}
-                        getItemLayout={(data, index) => ( {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index} )}
-                        data={mostExpectedList}
-                        keyExtractor={(item) => `${item.id}`}
-                        renderItem={this._renderExpectedItem}
-                        onEndReached={this.getMostExpectedList}
-                        onEndReachedThreshold={0.1}
-                    />
-                </View>
-                <View style={{flex: 1}}>
-                    <SectionList
-                        sections={comingList}
-                        renderSectionHeader={({section}) => <Text style={styles.title}>{section.comingTitle}</Text>}
-                        renderItem={({item}) => <MovieItem movie={item}
-                                                           onPressHandle={() => this.props.navigation.navigate('Test')}/>}
-                        onEndReached={this.loadMoreComingList}
-                        onEndReachedThreshold={1}
-                        ListFooterComponent={<LoadMore loadingMore={loadingMore} completed={completed}/>}
-                    />
-                </View>
-            </ScrollView>
+            <FlatList
+                data={comingList}
+                keyExtractor={item => `${item.id}`}
+                ListHeaderComponent={this._renderHeader}
+                renderItem={this._renderItem}
+                onEndReached={this.loadMoreComingList}
+                onEndReachedThreshold={0.1}
+                ListFooterComponent={<LoadMore loadingMore={loadingMore} completed={completed}/>}
+                getItemLayout={(data, index) => ( {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index} )}
+            />
         )
     }
 }
