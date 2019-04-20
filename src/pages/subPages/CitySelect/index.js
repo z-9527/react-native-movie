@@ -26,7 +26,6 @@ class CitySelect extends React.Component {
     }
     state = {
         cityList: [],       //城市列表
-        locationCity: {},   //定位城市
     }
 
     componentDidMount () {
@@ -36,11 +35,13 @@ class CitySelect extends React.Component {
     getCitylist = async () => {
         const res = await get('https://maoyan.com/ajax/cities')
         this.setState({
-            locationCity: res.geoCity || {},
-            cityList: this._handleCityList(res.letterMap || {})
+            cityList: this._handleCityList(res.letterMap, res.geoCity)
         })
     }
-    _handleCityList = (obj) => {
+    _handleCityList = (obj, locationCity) => {
+        if(typeof obj !== 'object'){
+            return
+        }
         const list = []
         for (let [key, value] of Object.entries(obj)) {
             list.push({
@@ -56,7 +57,7 @@ class CitySelect extends React.Component {
         //添加定位城市
         list.unshift({
             title: '当前定位城市',
-            data: [[this.props.city.nm ? this.props.city : {nm: '正在定位...'}]],
+            data: [[locationCity]],
         })
         return list
     }
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
         borderBottomColor: theme.borderBottomColor,
     },
     columnText: {
-        flex:1
+        flex: 1
     },
     sectionRowItem: {
         flex: 1,
